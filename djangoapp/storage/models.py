@@ -11,11 +11,11 @@ TYPES_OF_NODES = [
 class Node(models.Model):
     name = models.CharField(max_length=50, unique=True)
     type = models.CharField(max_length=50, choices=TYPES_OF_NODES)
-    glass_total_capacity = models.FloatField()
+    glass_total_capacity = models.FloatField(default=0)
     glass_current_occupancy = models.FloatField(default=0)
-    plastic_total_capacity = models.FloatField()
+    plastic_total_capacity = models.FloatField(default=0)
     plastic_current_occupancy = models.FloatField(default=0)
-    biowastes_total_capacity = models.FloatField()
+    biowastes_total_capacity = models.FloatField(default=0)
     biowastes_current_occupancy = models.FloatField(default=0)
 
     def clean(self):

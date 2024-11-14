@@ -67,7 +67,6 @@ class MoveWastesView(APIView):
                     (storage.biowastes_total_capacity -
                      storage.biowastes_current_occupancy)
                 )
-                print(glass_diff, plastic_diff, biowastes_diff)
                 try:
                     with transaction.atomic():
                         storage.glass_current_occupancy += glass_diff
@@ -103,10 +102,9 @@ class CreateNodeView(APIView):
         biowastes_capacity = json.loads(request.body).get('biowastes_capacity', 0)
 
         capacity_given = any([glass_capacity, plastic_capacity, biowastes_capacity])
-        is_correct = all([glass_capacity > 0, plastic_capacity > 0, biowastes_capacity > 0])
+        is_correct = all([glass_capacity >= 0, plastic_capacity >= 0, biowastes_capacity >= 0])
 
         if name and node_type and capacity_given and is_correct:
-            print(123)
             if not all([glass_capacity >= 0, plastic_capacity >= 0, biowastes_capacity >= 0]):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             try:
@@ -119,7 +117,7 @@ class CreateNodeView(APIView):
                         biowastes_total_capacity=biowastes_capacity
                     )
                     for i in connections:
-                        if type(i) != list and len(i) != 2:
+                        if type(i) != list and len(i) != 2 or i[0] == node.name:
                             transaction.set_rollback(True)
                             return Response(status=status.HTTP_400_BAD_REQUEST)
                         node_to = Node.objects.get(name=i[0])
@@ -130,6 +128,8 @@ class CreateNodeView(APIView):
                         )
             except ObjectDoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
+            except ValidationError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             except IntegrityError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_201_CREATED)
@@ -154,6 +154,7 @@ class GetOccupancyView(APIView):
                 },
                 status=status.HTTP_200_OK
             )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def dfs(node: Node, length, name, visited):
@@ -194,6 +195,7 @@ class GetDistanceView(APIView):
                     {'distance': distance},
                     status=status.HTTP_200_OK
                 )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -208,7 +210,7 @@ class GenerateWastesView(APIView):
 
         is_not_empty = any([glass, plastic, biowastes])
         try:
-            is_correct = all([glass > 0, plastic > 0, biowastes > 0])
+            is_correct = all([glass >= 0, plastic >= 0, biowastes >= 0])
         except TypeError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
