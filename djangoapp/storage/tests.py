@@ -192,3 +192,33 @@ class WasteGeneratingTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class WastesMovingTests(APITestCase):
+    def test_move_wastes_correct_information(self):
+        url = reverse('move_wastes')
+        operator_node = Node.objects.create(
+            name='operator1',
+            type='operator',
+            glass_total_capacity=30,
+            glass_current_occupancy=30
+        )
+        storage_node = Node.objects.create(name='storage1', type='storage', glass_total_capacity=30)
+        Connection.objects.create(node_from=operator_node, node_to=storage_node, distance=10)
+        response = self.client.post(url, {}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()[0]['glass'], '0.0/30.0')
+
+    def test_move_wastes_nonexistent_node(self):
+        url = reverse('move_wastes')
+        operator_node = Node.objects.create(
+            name='operator1',
+            type='operator',
+            glass_total_capacity=30,
+            glass_current_occupancy=30
+        )
+        storage_node = Node.objects.create(name='storage1', type='storage', glass_total_capacity=30)
+        Connection.objects.create(node_from=operator_node, node_to=storage_node, distance=10)
+        data = {'operator_name': '123'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -31,7 +31,13 @@ class Node(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f'{self.name} ({self.type})'
+
 class Connection(models.Model):
     node_from = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='node_from')
     node_to = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='node_to')
     distance = models.FloatField()
+
+    def __str__(self):
+        return f'{self.node_from.name} -> {self.node_to.name}'

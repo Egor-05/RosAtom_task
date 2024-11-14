@@ -28,13 +28,12 @@ def dfs_nodes(node: Node, lengths: dict, length, visited: set):
 class MoveWastesView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
-        operator_name = request.GET.get("operator_name", None)
+    def post(self, request):
+        operator_name = json.loads(request.body).get("operator_name", None)
 
         if operator_name:
-            try:
-                operators = Node.objects.filter(name=operator_name, type='operator')
-            except ObjectDoesNotExist:
+            operators = Node.objects.filter(name=operator_name, type='operator')
+            if operators.count() < 1:
                 return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             operators = Node.objects.filter(type='operator')
