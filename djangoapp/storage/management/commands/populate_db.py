@@ -6,8 +6,6 @@ from django.contrib.auth.models import User
 from storage.models import Node, Connection
 
 class Command(BaseCommand):
-    help = 'The Zen of Python'
-
     def handle(self, *args, **options):
         try:
             user = User.objects.create_superuser("root", 'admin@123.ru', 'qwerty')
