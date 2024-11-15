@@ -152,20 +152,21 @@ class GetNodeDataTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class WasteGeneratingTests(APITestCase):
-    def test_generate_wastes_correct_data(self):
-        url = reverse('generate_wastes')
+class WasteSetTests(APITestCase):
+    def test_set_wastes_correct_data(self):
+        url = reverse('set_wastes')
         node = Node.objects.create(name='storage1', type='operator', glass_total_capacity=30)
         data = {
-            "operator": "storage1",
+            "name": "storage1",
             "glass": 30
         }
+
         response = self.client.post(url, data, format='json')
+        print(node.glass_current_occupancy)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(node.glass_total_capacity, 30)
 
-    def test_generate_wastes_incorrect_data(self):
-        url = reverse('generate_wastes')
+    def test_set_wastes_incorrect_data(self):
+        url = reverse('set_wastes')
         node = Node.objects.create(name='storage1', type='operator', glass_total_capacity=30)
         data = {
             "glass": 30
@@ -173,21 +174,24 @@ class WasteGeneratingTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_generate_wastes_incorrect_node_type(self):
-        url = reverse('generate_wastes')
-        node = Node.objects.create(name='storage1', type='storage', glass_total_capacity=30)
+    def test_set_wastes_correct_data_negative_value(self):
+        url = reverse('set_wastes')
+        node = Node.objects.create(name='storage3', type='storage', glass_total_capacity=30, glass_current_occupancy=30)
         data = {
-            "name": 'storage1',
-            "glass": 30
+            "name": "storage3",
+            "glass": -15,
+            '123': 1
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(node.glass_current_occupancy)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_generate_wastes_nonexistent_node(self):
-        url = reverse('generate_wastes')
+
+    def test_set_wastes_nonexistent_node(self):
+        url = reverse('set_wastes')
         node = Node.objects.create(name='storage1', type='operator', glass_total_capacity=30)
         data = {
-            "operator": "storage",
+            "name": "storage",
             "glass": 30
         }
         response = self.client.post(url, data, format='json')

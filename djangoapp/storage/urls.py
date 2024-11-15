@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (MoveWastesView, CreateNodeView, GetOccupancyView, GetDistanceView, GenerateWastesView)
+from .views import (MoveWastesView, CreateNodeView, GetOccupancyView, GetDistanceView, SetWastesView)
 
 urlpatterns = [
     path(
@@ -23,8 +23,8 @@ urlpatterns = [
         name='get_distance'
     ),
     path(
-        'generate_wastes/',
-        GenerateWastesView.as_view(),
-        name='generate_wastes'
+        'set_wastes/',
+        SetWastesView.as_view(),
+        name='set_wastes'
     )
 ]

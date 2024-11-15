@@ -26,6 +26,12 @@ class Node(models.Model):
             raise ValidationError('Значение количества отходов не может превышать максимальную вместимость')
         if self.biowastes_current_occupancy > self.biowastes_total_capacity:
              raise ValidationError('Значение количества отходов не может превышать максимальную вместимость')
+        if self.glass_current_occupancy < 0:
+             raise ValidationError('Значение количества отходов должно быть больше 0')
+        if self.plastic_current_occupancy < 0:
+             raise ValidationError('Значение количества отходов должно быть больше 0')
+        if self.biowastes_current_occupancy < 0:
+             raise ValidationError('Значение количества отходов должно быть больше 0')
 
     def save(self, *args, **kwargs):
         self.full_clean()

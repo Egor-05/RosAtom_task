@@ -197,31 +197,31 @@ class GetDistanceView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class GenerateWastesView(APIView):
+class SetWastesView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        operator_name = json.loads(request.body).get('operator', None)
+        name = json.loads(request.body).get('name', None)
         glass = json.loads(request.body).get('glass', 0)
         plastic = json.loads(request.body).get('plastic', 0)
         biowastes = json.loads(request.body).get('biowastes', 0)
 
-        is_not_empty = any([glass, plastic, biowastes])
-        try:
-            is_correct = all([glass >= 0, plastic >= 0, biowastes >= 0])
-        except TypeError:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        is_not_empty = any([glass != 0, plastic != 0, biowastes != 0])
 
-        if operator_name and is_not_empty and is_correct:
+        print(name and is_not_empty, json.loads(request.body))
+
+        if name and is_not_empty:
             try:
-                operator = Node.objects.get(name=operator_name, type='operator')
+                operator = Node.objects.get(name=name)
             except ObjectDoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             try:
-                operator.glass_current_occupancy -= glass
-                operator.plastic_current_occupancy -= plastic
-                operator.biowastes_current_occupancy -= biowastes
+                operator.glass_current_occupancy += glass
+                print(operator.glass_current_occupancy)
+                operator.plastic_current_occupancy += plastic
+                operator.biowastes_current_occupancy += biowastes
                 operator.save()
+                print(operator.glass_current_occupancy)
             except ValidationError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_200_OK)
