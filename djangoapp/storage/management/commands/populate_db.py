@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import transaction, IntegrityError
+from django.contrib.auth.models import User
 
 from storage.models import Node, Connection
 
@@ -8,6 +9,10 @@ class Command(BaseCommand):
     help = 'The Zen of Python'
 
     def handle(self, *args, **options):
+        try:
+            user = User.objects.create_superuser("root", 'admin@123.ru', 'qwerty')
+        except IntegrityError:
+            pass
         try:
             with transaction.atomic():
                 operator1 = Node.objects.create(
