@@ -88,7 +88,6 @@ class MoveWastesView(APIView):
         return Response(statuses, status=status.HTTP_200_OK)
 
 
-
 class CreateNodeView(APIView):
     permission_classes = [AllowAny]
 
