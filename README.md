@@ -4,7 +4,7 @@
 
 Задание: https://github.com/notafavor/test-cases/blob/main/case_1.md
 
-Проект с использованием Django REST Framework
+Проект выполнен с использованием Django REST Framework
 
 ## Технические требования
 
