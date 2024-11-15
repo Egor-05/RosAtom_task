@@ -183,7 +183,6 @@ class WasteSetTests(APITestCase):
             '123': 1
         }
         response = self.client.post(url, data, format='json')
-        print(node.glass_current_occupancy)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

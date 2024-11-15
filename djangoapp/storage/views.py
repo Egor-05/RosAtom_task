@@ -100,9 +100,14 @@ class CreateNodeView(APIView):
         biowastes_capacity = json.loads(request.body).get('biowastes_capacity', 0)
 
         capacity_given = any([glass_capacity, plastic_capacity, biowastes_capacity])
+        is_correct_types = all([
+            type(glass_capacity) == int,
+            type(plastic_capacity) == int,
+            type(biowastes_capacity) == int
+        ])
         is_correct = all([glass_capacity >= 0, plastic_capacity >= 0, biowastes_capacity >= 0])
 
-        if name and node_type and capacity_given and is_correct:
+        if name and node_type and capacity_given and is_correct and is_correct_types:
             if not all([glass_capacity >= 0, plastic_capacity >= 0, biowastes_capacity >= 0]):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             try:
@@ -207,21 +212,18 @@ class SetWastesView(APIView):
         biowastes = json.loads(request.body).get('biowastes', 0)
 
         is_not_empty = any([glass != 0, plastic != 0, biowastes != 0])
+        is_correct = all([type(glass) == int, type(plastic) == int, type(biowastes) == int])
 
-        print(name and is_not_empty, json.loads(request.body))
-
-        if name and is_not_empty:
+        if name and is_not_empty and is_correct:
             try:
                 operator = Node.objects.get(name=name)
             except ObjectDoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             try:
                 operator.glass_current_occupancy += glass
-                print(operator.glass_current_occupancy)
                 operator.plastic_current_occupancy += plastic
                 operator.biowastes_current_occupancy += biowastes
                 operator.save()
-                print(operator.glass_current_occupancy)
             except ValidationError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_200_OK)
