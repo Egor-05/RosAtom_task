@@ -116,6 +116,8 @@ Docker desktop
 }
 ```
 
+<br/>
+
 ### `http://127.0.0.1:8000/move_wastes/`
 
 **Описание:** Обрабатывается представлением `MoveWastesView`. Позволяет перемещать отходы между операторами и хранилищами.  
@@ -141,6 +143,8 @@ Docker desktop
 {}
 ```
 
+<br/>
+
 ### `http://127.0.0.1:8000/get_occupancy/`
 
 **Описание:** Обрабатывается представлением `GetOccupancyView`. Позволяет получать информацию о заполненности узла.
@@ -158,6 +162,8 @@ Docker desktop
 ```
 http://127.0.0.1:8000/get_occupancy/?name=operator1
 ```
+
+<br/>
 
 ### `http://127.0.0.1:8000/get_distance/`
 
@@ -179,6 +185,8 @@ http://127.0.0.1:8000/get_occupancy/?name=operator1
 ```
 http://127.0.0.1:8000/get_distance/?from=operator1&to=storage1
 ```
+
+<br/>
 
 ### `http://127.0.0.1:8000/generate_wastes/`
 
